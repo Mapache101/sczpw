@@ -1,0 +1,6 @@
+{
+  "name": "Santa Cruz Pet Watch",
+  "description": "Community pet recovery and lost & found platform for Santa Cruz de la Sierra with real-time reports, photo uploads, interactive map, WhatsApp alerts, and printable flyers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

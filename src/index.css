@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Fraunces", Georgia, serif;
+  --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --color-warm-bg: #faf6f0;
+  --color-warm-bg-alt: #f5eee6;
+  --color-warm-white: #fffdf9;
+  --color-warm-brown-dark: #4d3930;
+  --color-warm-brown: #614b3f;
+  --color-warm-brown-light: #806a5b;
+  --color-warm-brown-muted: #9b8778;
+  --color-warm-beige: #ead8c8;
+  --color-warm-beige-light: #f2e5da;
+  --color-warm-cream: #f7ecdf;
+  --color-warm-green: #81947c;
+  --color-warm-green-light: #e5ece2;
+  --color-warm-border: #e7dbd0;
+  --color-warm-border-dark: #dac8ba;
+  --color-warm-accent: #b98f73;
+}
+
+body {
+  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #faf6f0;
+  color: #4d3930;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, .font-editorial {
+  font-family: "Fraunces", Georgia, serif;
+}
+
+/* Custom smooth scroll and scrollbar */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Print flyer layout optimizations */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-flyer, #printable-flyer * {
+    visibility: visible;
+  }
+  #printable-flyer {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 24px;
+    background: white;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
