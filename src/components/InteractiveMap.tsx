@@ -29,10 +29,13 @@ function geoToSvg(lat: number, lng: number): { x: number; y: number } {
   };
 }
 
+import { useLanguage } from '../i18n/LanguageContext.tsx';
+
 export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   reports,
   onSelectReport
 }) => {
+  const { t } = useLanguage();
   const [selectedPet, setSelectedPet] = useState<PetReport | null>(null);
   const [activeStatusFilter, setActiveStatusFilter] = useState<'all' | 'lost' | 'found' | 'reunited'>('all');
 
@@ -42,35 +45,42 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     return r.status === activeStatusFilter;
   });
 
+  const filterOptions = [
+    { label: t.tabAll, value: 'all' as const },
+    { label: t.tabLost, value: 'lost' as const },
+    { label: t.tabFound, value: 'found' as const },
+    { label: t.tabReunited, value: 'reunited' as const }
+  ];
+
   return (
     <section id="map-section" className="py-16 border-b border-[#e7dbd0] bg-[#faf6f0]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
             <span className="text-xs uppercase tracking-widest font-bold text-[#806a5b] block mb-2">
-              Spatial Neighborhood Sightings
+              {t.mapLabel}
             </span>
             <h2 className="font-editorial text-3xl sm:text-4xl font-bold text-[#4d3930]">
-              Santa Cruz de la Sierra Pet Map
+              {t.mapTitle}
             </h2>
             <p className="text-sm text-[#614b3f] mt-1 max-w-xl">
-              Locate reported pets across the concentric ring avenues (1er to 4to Anillo) and neighborhoods. Click any marker for instant details.
+              {t.mapSubtitle}
             </p>
           </div>
 
           {/* Map Filter Tabs */}
           <div className="flex items-center gap-1.5 p-1 bg-[#fffdf9] rounded-xl border border-[#dac8ba] self-start md:self-auto shadow-xs">
-            {(['all', 'lost', 'found', 'reunited'] as const).map((status) => (
+            {filterOptions.map((opt) => (
               <button
-                key={status}
-                onClick={() => setActiveStatusFilter(status)}
+                key={opt.value}
+                onClick={() => setActiveStatusFilter(opt.value)}
                 className={`px-3 py-1.5 text-xs font-semibold rounded-lg capitalize transition-all ${
-                  activeStatusFilter === status
+                  activeStatusFilter === opt.value
                     ? 'bg-[#4d3930] text-[#fffdf9]'
                     : 'text-[#614b3f] hover:text-[#4d3930] hover:bg-[#f5eee6]'
                 }`}
               >
-                {status === 'all' ? 'All Pins' : status}
+                {opt.label}
               </button>
             ))}
           </div>
@@ -242,7 +252,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#fffdf9] bg-[#4d3930] hover:bg-[#362720] rounded-lg transition-colors"
                   >
                     <Eye className="w-3.5 h-3.5" />
-                    <span>View Details</span>
+                    <span>{t.viewDetails}</span>
                   </button>
                 </div>
               </div>
@@ -252,24 +262,24 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
           {/* Map Footer Legend */}
           <div className="p-4 bg-[#fbf9f5] border-t border-[#e7dbd0] flex flex-wrap items-center justify-between gap-4 text-xs text-[#806a5b]">
             <div className="flex items-center gap-4">
-              <span className="font-semibold text-[#4d3930]">Map Legend:</span>
+              <span className="font-semibold text-[#4d3930]">{t.mapLegend}</span>
               <span className="inline-flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#b98f73]" />
-                Lost Pet
+                {t.badgeLost}
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#81947c]" />
-                Found Pet
+                {t.badgeFound}
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#39734a]" />
-                Reunited
+                {t.badgeReunited}
               </span>
             </div>
 
             <div className="flex items-center gap-1.5 text-[11px] text-[#9b8778]">
               <Navigation className="w-3 h-3 text-[#b98f73]" />
-              <span>Concentric Anillo grid of Santa Cruz de la Sierra</span>
+              <span>{t.mapGridNote}</span>
             </div>
           </div>
         </div>

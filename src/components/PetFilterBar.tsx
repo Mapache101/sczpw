@@ -2,6 +2,7 @@ import React from 'react';
 import { Search, RotateCcw } from 'lucide-react';
 import { FilterOptions, PetStatus, PetSpecies } from '../types.ts';
 import { SANTA_CRUZ_AREAS } from '../data/seedData.ts';
+import { useLanguage } from '../i18n/LanguageContext.tsx';
 
 interface PetFilterBarProps {
   filters: FilterOptions;
@@ -14,18 +15,20 @@ export const PetFilterBar: React.FC<PetFilterBarProps> = ({
   onFilterChange,
   totalMatches
 }) => {
+  const { t } = useLanguage();
+
   const statusTabs: { label: string; value: PetStatus | 'all' }[] = [
-    { label: 'All Reports', value: 'all' },
-    { label: 'Lost', value: 'lost' },
-    { label: 'Found', value: 'found' },
-    { label: 'Reunited', value: 'reunited' }
+    { label: t.tabAll, value: 'all' },
+    { label: t.tabLost, value: 'lost' },
+    { label: t.tabFound, value: 'found' },
+    { label: t.tabReunited, value: 'reunited' }
   ];
 
   const speciesOptions: { label: string; value: PetSpecies | 'all' }[] = [
-    { label: 'All Pets', value: 'all' },
-    { label: 'Dogs', value: 'dog' },
-    { label: 'Cats', value: 'cat' },
-    { label: 'Other', value: 'other' }
+    { label: t.allPets, value: 'all' },
+    { label: t.dogs, value: 'dog' },
+    { label: t.cats, value: 'cat' },
+    { label: t.other, value: 'other' }
   ];
 
   const hasActiveFilters =
@@ -54,7 +57,7 @@ export const PetFilterBar: React.FC<PetFilterBarProps> = ({
             type="text"
             value={filters.search}
             onChange={(e) => onFilterChange({ ...filters, search: e.target.value })}
-            placeholder="Search by name, breed, color, street, or feature..."
+            placeholder={t.searchPlaceholder}
             className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#faf6f0] border border-[#dac8ba] rounded-xl text-[#4d3930] placeholder-[#9b8778] focus:outline-none focus:ring-2 focus:ring-[#b98f73]/50 focus:border-[#b98f73] transition-all"
           />
         </div>
@@ -82,7 +85,7 @@ export const PetFilterBar: React.FC<PetFilterBarProps> = ({
         <div className="flex flex-wrap items-center gap-3">
           {/* Species Pills */}
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium text-[#806a5b] mr-1">Pet Type:</span>
+            <span className="text-xs font-medium text-[#806a5b] mr-1">{t.filterPetType}</span>
             {speciesOptions.map((sp) => (
               <button
                 key={sp.value}
@@ -100,14 +103,14 @@ export const PetFilterBar: React.FC<PetFilterBarProps> = ({
 
           {/* Area Selector */}
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium text-[#806a5b] mr-1">Neighborhood:</span>
+            <span className="text-xs font-medium text-[#806a5b] mr-1">{t.filterNeighborhood}</span>
             <select
               value={filters.area}
               onChange={(e) => onFilterChange({ ...filters, area: e.target.value })}
               aria-label="Neighborhood filter"
               className="px-3 py-1 text-xs font-medium bg-[#faf6f0] text-[#4d3930] border border-[#dac8ba] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#b98f73]"
             >
-              <option value="all">All Santa Cruz Areas</option>
+              <option value="all">{t.allNeighborhoods}</option>
               {SANTA_CRUZ_AREAS.map((area) => (
                 <option key={area} value={area}>
                   {area}
@@ -120,7 +123,7 @@ export const PetFilterBar: React.FC<PetFilterBarProps> = ({
         {/* Counter and Reset */}
         <div className="flex items-center gap-3 text-xs text-[#806a5b]">
           <span className="font-medium tabular-nums">
-            {totalMatches} {totalMatches === 1 ? 'report found' : 'reports found'}
+            {totalMatches} {totalMatches === 1 ? t.reportsFoundSingular : t.reportsFoundPlural}
           </span>
           {hasActiveFilters && (
             <button
@@ -128,7 +131,7 @@ export const PetFilterBar: React.FC<PetFilterBarProps> = ({
               className="inline-flex items-center gap-1 text-[#b98f73] hover:text-[#4d3930] font-semibold transition-colors"
             >
               <RotateCcw className="w-3 h-3" />
-              Reset filters
+              {t.resetFilters}
             </button>
           )}
         </div>

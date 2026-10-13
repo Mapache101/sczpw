@@ -4,6 +4,7 @@ import { FirebaseCustomConfig } from '../types.ts';
 import { DEFAULT_FIREBASE_CONFIG, getActiveFirebaseConfig, initFirebase } from '../services/firebase.ts';
 import { saveStoredFirebaseConfig, exportReportsAsJSON } from '../services/storage.ts';
 import { getStoredCloudinaryConfig, saveStoredCloudinaryConfig, CloudinaryConfig } from '../services/cloudinary.ts';
+import { useLanguage } from '../i18n/LanguageContext.tsx';
 
 interface FirebaseConfigModalProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ export const FirebaseConfigModal: React.FC<FirebaseConfigModalProps> = ({
   syncSource,
   onConfigUpdated
 }) => {
+  const { language } = useLanguage();
   const [config, setConfig] = useState<FirebaseCustomConfig>(getActiveFirebaseConfig());
   const [cloudinaryConfig, setCloudinaryConfig] = useState<CloudinaryConfig>(getStoredCloudinaryConfig());
   const [copiedFirestore, setCopiedFirestore] = useState(false);
@@ -83,10 +85,10 @@ service cloud.firestore {
           </div>
           <div>
             <h2 id="firebase-config-title" className="font-editorial text-2xl font-bold text-[#4d3930]">
-              Cloudinary &amp; Firestore Setup
+              {language === 'es' ? 'Configuración de Cloudinary y Firestore' : 'Cloudinary & Firestore Setup'}
             </h2>
             <div className="flex items-center gap-2 mt-0.5 text-xs">
-              <span className="text-[#806a5b]">Status:</span>
+              <span className="text-[#806a5b]">{language === 'es' ? 'Estado:' : 'Status:'}</span>
               <span
                 className={`font-bold px-2 py-0.5 rounded ${
                   cloudinaryConfig.cloudName
@@ -94,7 +96,9 @@ service cloud.firestore {
                     : 'bg-[#fff5eb] text-[#b98f73]'
                 }`}
               >
-                {cloudinaryConfig.cloudName ? 'Cloudinary Ready' : 'Cloudinary: Enter Cloud Name below'}
+                {cloudinaryConfig.cloudName
+                  ? (language === 'es' ? 'Cloudinary Listo' : 'Cloudinary Ready')
+                  : (language === 'es' ? 'Cloudinary: Ingresa tu Cloud Name abajo' : 'Cloudinary: Enter Cloud Name below')}
               </span>
             </div>
           </div>
@@ -106,16 +110,20 @@ service cloud.firestore {
             <div className="flex items-center gap-2">
               <Cloud className="w-5 h-5 text-[#2b72a4]" />
               <h3 className="text-sm font-bold text-[#1f4a6b]">
-                Cloudinary Free Photo Storage (No Credit Card Required)
+                {language === 'es'
+                  ? 'Almacenamiento Gratuito de Fotos en Cloudinary (Sin Tarjeta)'
+                  : 'Cloudinary Free Photo Storage (No Credit Card Required)'}
               </h3>
             </div>
             <span className="text-[10px] font-bold px-2 py-0.5 bg-[#dbeaf5] text-[#1f4a6b] rounded">
-              Active Photo Provider
+              {language === 'es' ? 'Proveedor Activo' : 'Active Photo Provider'}
             </span>
           </div>
 
           <p className="text-xs text-[#2b5a7e] leading-relaxed">
-            Your pet photos will be stored directly in Cloudinary. Your API Key and Secret are configured. Enter your <strong>Cloud Name</strong> from your Cloudinary dashboard to finish:
+            {language === 'es'
+              ? 'Las fotos de las mascotas se guardan directamente en Cloudinary. Tu API Key y Secret ya están configurados. Ingresa tu Cloud Name desde tu consola de Cloudinary para finalizar:'
+              : 'Your pet photos will be stored directly in Cloudinary. Your API Key and Secret are configured. Enter your Cloud Name from your Cloudinary dashboard to finish:'}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
@@ -166,7 +174,11 @@ service cloud.firestore {
           {!cloudinaryConfig.cloudName && (
             <div className="flex items-center gap-1.5 text-[11px] text-[#b98f73] font-semibold mt-1">
               <AlertCircle className="w-3.5 h-3.5" />
-              <span>Where to find Cloud Name: Look at the top of your Cloudinary Dashboard under "Cloud name".</span>
+              <span>
+                {language === 'es'
+                  ? 'Dónde encontrar el Cloud Name: En la parte superior de tu panel de Cloudinary dice "Cloud name".'
+                  : 'Where to find Cloud Name: Look at the top of your Cloudinary Dashboard under "Cloud name".'}
+              </span>
             </div>
           )}
         </div>
@@ -176,7 +188,11 @@ service cloud.firestore {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 font-bold text-[#4d3930]">
               <Shield className="w-4 h-4 text-[#81947c]" />
-              <span>Firestore Rules (Free Tier Database - No Card Needed)</span>
+              <span>
+                {language === 'es'
+                  ? 'Reglas de Firestore (Base de Datos Gratuita - Sin Tarjeta)'
+                  : 'Firestore Rules (Free Tier Database - No Card Needed)'}
+              </span>
             </div>
             <button
               type="button"
@@ -184,11 +200,17 @@ service cloud.firestore {
               className="inline-flex items-center gap-1 text-xs font-semibold text-[#b98f73] hover:text-[#4d3930]"
             >
               {copiedFirestore ? <Check className="w-3.5 h-3.5 text-[#39734a]" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedFirestore ? 'Copied!' : 'Copy Rule'}</span>
+              <span>
+                {copiedFirestore
+                  ? (language === 'es' ? '¡Copiado!' : 'Copied!')
+                  : (language === 'es' ? 'Copiar Regla' : 'Copy Rule')}
+              </span>
             </button>
           </div>
           <p className="leading-relaxed text-[11px]">
-            In Firebase Console &gt; <strong>Firestore Database &gt; Rules</strong>, paste this simple rule so anyone in Santa Cruz can submit reports:
+            {language === 'es'
+              ? 'En Firebase Console > Firestore Database > Rules, pega esta regla para que toda la comunidad de Santa Cruz pueda publicar reportes:'
+              : 'In Firebase Console > Firestore Database > Rules, paste this simple rule so anyone in Santa Cruz can submit reports:'}
           </p>
           <pre className="p-3 bg-[#2d2420] text-[#f2e5da] text-[11px] rounded-xl font-mono overflow-x-auto">
             {firestoreRulesCode}
@@ -200,14 +222,14 @@ service cloud.firestore {
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#4d3930] flex items-center gap-1.5">
               <Key className="w-3.5 h-3.5 text-[#b98f73]" />
-              <span>Firebase Database Credentials</span>
+              <span>{language === 'es' ? 'Credenciales de Base de Datos Firebase' : 'Firebase Database Credentials'}</span>
             </h3>
             <button
               type="button"
               onClick={handleResetDefaults}
               className="text-xs text-[#806a5b] hover:text-[#4d3930] underline"
             >
-              Reset to Defaults
+              {language === 'es' ? 'Restablecer Valores Iniciales' : 'Reset to Defaults'}
             </button>
           </div>
 
@@ -238,10 +260,12 @@ service cloud.firestore {
         <div className="bg-[#f5eee6] p-4 rounded-2xl border border-[#e7dbd0] flex flex-wrap items-center justify-between gap-3 mb-6">
           <div>
             <span className="text-xs font-bold text-[#4d3930] block">
-              Backup &amp; Export Pet Reports
+              {language === 'es' ? 'Copia de Seguridad y Exportación' : 'Backup & Export Pet Reports'}
             </span>
             <span className="text-[11px] text-[#806a5b]">
-              Export all community pet reports as a JSON backup file anytime.
+              {language === 'es'
+                ? 'Exporta todos los reportes comunitarios a un archivo JSON en cualquier momento.'
+                : 'Export all community pet reports as a JSON backup file anytime.'}
             </span>
           </div>
           <button
@@ -249,7 +273,7 @@ service cloud.firestore {
             className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-[#4d3930] bg-[#fffdf9] hover:bg-[#faf6f0] border border-[#dac8ba] rounded-xl transition-colors"
           >
             <Download className="w-3.5 h-3.5 text-[#b98f73]" />
-            <span>Export JSON</span>
+            <span>{language === 'es' ? 'Exportar JSON' : 'Export JSON'}</span>
           </button>
         </div>
 
@@ -260,7 +284,7 @@ service cloud.firestore {
             onClick={onClose}
             className="px-4 py-2.5 text-xs font-semibold text-[#614b3f] hover:text-[#4d3930]"
           >
-            Cancel
+            {language === 'es' ? 'Cancelar' : 'Cancel'}
           </button>
           <button
             type="button"
@@ -270,12 +294,12 @@ service cloud.firestore {
             {saveSuccess ? (
               <>
                 <Check className="w-4 h-4 text-[#81947c]" />
-                <span>Configuration Saved!</span>
+                <span>{language === 'es' ? '¡Configuración Guardada!' : 'Configuration Saved!'}</span>
               </>
             ) : (
               <>
                 <RefreshCw className="w-4 h-4" />
-                <span>Save &amp; Connect</span>
+                <span>{language === 'es' ? 'Guardar y Conectar' : 'Save & Connect'}</span>
               </>
             )}
           </button>

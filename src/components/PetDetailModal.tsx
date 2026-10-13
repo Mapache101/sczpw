@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, MapPin, Calendar, Phone, MessageSquare, Printer, CheckCircle2, Award } from 'lucide-react';
 import { PetReport } from '../types.ts';
+import { useLanguage } from '../i18n/LanguageContext.tsx';
 import confetti from 'canvas-confetti';
 
 interface PetDetailModalProps {
@@ -16,6 +17,7 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
   onPrintFlyer,
   onMarkReunited
 }) => {
+  const { language, t } = useLanguage();
   if (!report) return null;
 
   const isLost = report.status === 'lost';
@@ -27,7 +29,9 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
     : report.contactPhone.replace(/\D/g, '');
 
   const whatsappMessage = encodeURIComponent(
-    `Hola ${report.contactName}! Vi el reporte en Santa Cruz Pet Watch sobre ${report.petName} (${report.breed || report.type}) en ${report.area}. Quería contactarte sobre esto.`
+    language === 'es'
+      ? `¡Hola ${report.contactName}! Vi el reporte en Santa Cruz Pet Watch sobre ${report.petName} (${report.breed || report.type}) en ${report.area}. Quería contactarte sobre esto.`
+      : `Hello ${report.contactName}! I saw your report on Santa Cruz Pet Watch about ${report.petName} (${report.breed || report.type}) in ${report.area}. Reaching out to you about this.`
   );
 
   const handleCelebrate = () => {
@@ -54,7 +58,7 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
         {/* Close Button */}
         <button
           onClick={onClose}
-          aria-label="Cerrar detalles"
+          aria-label={t.closeModal}
           className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-[#fffdf9]/90 backdrop-blur-sm border border-[#e7dbd0] text-[#4d3930] hover:bg-[#fffdf9] flex items-center justify-center shadow-md transition-all active:scale-90"
         >
           <X className="w-5 h-5" />
@@ -78,17 +82,17 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
             <div className="absolute top-4 left-4 flex gap-2">
               {isLost && (
                 <span className="px-3.5 py-1 text-xs font-bold uppercase tracking-wider bg-[#b98f73] text-[#fffdf9] rounded-lg shadow-sm">
-                  Lost Pet
+                  {t.badgeLost}
                 </span>
               )}
               {isFound && (
                 <span className="px-3.5 py-1 text-xs font-bold uppercase tracking-wider bg-[#81947c] text-[#fffdf9] rounded-lg shadow-sm">
-                  Found Pet
+                  {t.badgeFound}
                 </span>
               )}
               {isReunited && (
                 <span className="px-3.5 py-1 text-xs font-bold uppercase tracking-wider bg-[#39734a] text-[#fffdf9] rounded-lg shadow-sm">
-                  Reunited &amp; Safe
+                  {t.badgeReunited}
                 </span>
               )}
             </div>
@@ -122,7 +126,7 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Calendar className="w-4 h-4 text-[#806a5b]" />
-                  Last seen: {report.lastSeenDate}
+                  {report.lastSeenDate}
                 </span>
               </div>
             </div>
@@ -131,7 +135,7 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
             <div className="space-y-4 pt-4 border-t border-[#f2e5da]">
               <div>
                 <h4 className="text-xs uppercase tracking-wider font-bold text-[#806a5b] mb-1">
-                  Color &amp; Characteristics
+                  {t.characteristicsTitle}
                 </h4>
                 <p className="text-sm text-[#4d3930] font-medium leading-relaxed">
                   {report.color}
@@ -141,7 +145,7 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
               {report.distinctiveFeatures && (
                 <div>
                   <h4 className="text-xs uppercase tracking-wider font-bold text-[#806a5b] mb-1">
-                    Distinctive Markings &amp; Notes
+                    {t.markingsTitle}
                   </h4>
                   <p className="text-sm text-[#614b3f] leading-relaxed bg-[#faf6f0] p-4 rounded-2xl border border-[#e7dbd0]">
                     {report.distinctiveFeatures}
@@ -152,7 +156,7 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
               {report.contactNotes && (
                 <div>
                   <h4 className="text-xs uppercase tracking-wider font-bold text-[#806a5b] mb-1">
-                    Special Instructions
+                    {t.instructionsTitle}
                   </h4>
                   <p className="text-sm text-[#614b3f] leading-relaxed">
                     {report.contactNotes}
@@ -166,7 +170,7 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-xs uppercase font-bold text-[#806a5b] block">
-                    Report Contact
+                    {t.contactPersonTitle}
                   </span>
                   <span className="text-base font-bold text-[#4d3930]">
                     {report.contactName}
@@ -184,7 +188,7 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
                     className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#fffdf9] bg-[#25D366] hover:bg-[#20ba5a] rounded-xl shadow-xs transition-colors"
                   >
                     <MessageSquare className="w-4 h-4" />
-                    <span>WhatsApp Chat</span>
+                    <span>WhatsApp</span>
                   </a>
                 )}
 
@@ -194,7 +198,7 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
                     className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#fffdf9] bg-[#4d3930] hover:bg-[#362720] rounded-xl transition-colors"
                   >
                     <Phone className="w-4 h-4" />
-                    <span>Llamar ({report.contactPhone})</span>
+                    <span>{t.callNow} ({report.contactPhone})</span>
                   </a>
                 )}
               </div>
@@ -210,7 +214,7 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
                 className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#4d3930] bg-[#faf6f0] hover:bg-[#f2e5da] border border-[#dac8ba] rounded-xl transition-colors"
               >
                 <Printer className="w-4 h-4" />
-                <span>Generate Printable Flyer</span>
+                <span>{t.generateFlyerButton}</span>
               </button>
 
               {!isReunited && (
@@ -219,7 +223,7 @@ export const PetDetailModal: React.FC<PetDetailModalProps> = ({
                   className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#fffdf9] bg-[#81947c] hover:bg-[#39734a] rounded-xl shadow-xs transition-colors"
                 >
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>Mark as Reunited!</span>
+                  <span>{t.markAsReunitedButton}</span>
                 </button>
               )}
             </div>

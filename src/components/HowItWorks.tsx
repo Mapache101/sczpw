@@ -1,28 +1,28 @@
 import React from 'react';
 import { FileEdit, MapPinned, HeartHandshake } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext.tsx';
 
 export const HowItWorks: React.FC = () => {
+  const { t } = useLanguage();
+
   const steps = [
     {
       icon: FileEdit,
-      step: 'Step 1',
-      title: 'Submit or Browse Reports',
-      description:
-        'Upload a clear photo, specify unique markings, and select your Santa Cruz neighborhood ring. Zero login barriers.'
+      step: t.step1Tag,
+      title: t.step1Title,
+      description: t.step1Desc
     },
     {
       icon: MapPinned,
-      step: 'Step 2',
-      title: 'Locate & Spread the Word',
-      description:
-        'Sightings appear on our interactive Santa Cruz map. Generate printable emergency posters or share directly on WhatsApp.'
+      step: t.step2Tag,
+      title: t.step2Title,
+      description: t.step2Desc
     },
     {
       icon: HeartHandshake,
-      step: 'Step 3',
-      title: 'Reunite with Care',
-      description:
-        'Connect directly with the finder or owner with 1-click WhatsApp messaging. Mark the pet as Reunited to celebrate!'
+      step: t.step3Tag,
+      title: t.step3Title,
+      description: t.step3Desc
     }
   ];
 
@@ -31,13 +31,13 @@ export const HowItWorks: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14">
           <span className="text-xs uppercase tracking-widest font-bold text-[#806a5b] block mb-2">
-            Simple Process
+            {t.howItWorksLabel}
           </span>
           <h2 className="font-editorial text-3xl sm:text-4xl font-bold text-[#4d3930]">
-            How Santa Cruz Pet Watch Works
+            {t.howItWorksTitle}
           </h2>
           <p className="text-sm text-[#614b3f] mt-2">
-            Designed for speed and neighborhood solidarity when every hour counts.
+            {t.howItWorksSubtitle}
           </p>
         </div>
 

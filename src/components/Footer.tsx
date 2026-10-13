@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../i18n/LanguageContext.tsx';
 
 interface FooterProps {
   onOpenReportForm: () => void;
@@ -9,6 +10,8 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenReportForm,
   onOpenFirebaseConfig
 }) => {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-[#f5eee6] text-[#614b3f] border-t border-[#e7dbd0] pt-16 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,24 +27,24 @@ export const Footer: React.FC<FooterProps> = ({
                   Santa Cruz Pet Watch
                 </span>
                 <span className="text-[11px] text-[#806a5b] font-medium tracking-wide">
-                  Lost · Found · Reunited
+                  {t.tagline}
                 </span>
               </div>
             </a>
             <p className="text-xs text-[#806a5b] leading-relaxed">
-              A community space dedicated to helping lost and found pets in Santa Cruz de la Sierra reconnect with their families.
+              {t.footerMission}
             </p>
           </div>
 
           {/* Explore links */}
           <div>
             <h4 className="font-editorial text-sm font-bold text-[#4d3930] mb-3">
-              Explore
+              {t.footerExplore}
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <a href="#reports" className="hover:text-[#4d3930] transition-colors">
-                  Pet Reports
+                  {t.navReports}
                 </a>
               </li>
               <li>
@@ -49,17 +52,17 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={onOpenReportForm}
                   className="hover:text-[#4d3930] transition-colors text-left"
                 >
-                  Report a Pet
+                  {t.footerReportPet}
                 </button>
               </li>
               <li>
                 <a href="#map-section" className="hover:text-[#4d3930] transition-colors">
-                  Interactive Map
+                  {t.navMap}
                 </a>
               </li>
               <li>
                 <a href="#how-it-works" className="hover:text-[#4d3930] transition-colors">
-                  How It Works
+                  {t.navHowItWorks}
                 </a>
               </li>
             </ul>
@@ -68,17 +71,17 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Resources links */}
           <div>
             <h4 className="font-editorial text-sm font-bold text-[#4d3930] mb-3">
-              Resources
+              {t.footerResources}
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <a href="#resources" className="hover:text-[#4d3930] transition-colors">
-                  Recovery Tips
+                  {t.navResources}
                 </a>
               </li>
               <li>
                 <a href="#faq" className="hover:text-[#4d3930] transition-colors">
-                  Frequently Asked Questions
+                  {t.navFaq}
                 </a>
               </li>
               <li>
@@ -86,7 +89,7 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={onOpenFirebaseConfig}
                   className="hover:text-[#4d3930] transition-colors text-left font-medium text-[#b98f73]"
                 >
-                  Cloudinary &amp; Storage Setup
+                  {t.footerCloudSetup}
                 </button>
               </li>
             </ul>
@@ -95,18 +98,18 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Santa Cruz Info */}
           <div>
             <h4 className="font-editorial text-sm font-bold text-[#4d3930] mb-3">
-              Santa Cruz
+              {t.footerCity}
             </h4>
             <div className="space-y-1.5 text-xs text-[#806a5b]">
-              <p>Santa Cruz de la Sierra, Bolivia</p>
-              <p>Community Powered Platform</p>
-              <p>For pets &amp; their families</p>
+              <p>{t.footerCityName}</p>
+              <p>{t.footerCommunity}</p>
+              <p>{t.footerForPets}</p>
             </div>
           </div>
         </div>
 
         <div className="pt-8 border-t border-[#e7dbd0] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#806a5b]">
-          <p>© 2026 Santa Cruz Pet Watch. Made with care for the local pet community.</p>
+          <p>{t.footerCopyright}</p>
           <span>Santa Cruz de la Sierra · Bolivia</span>
         </div>
       </div>

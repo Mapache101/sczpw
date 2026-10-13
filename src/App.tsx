@@ -17,8 +17,10 @@ import { Faq } from './components/Faq.tsx';
 import { Footer } from './components/Footer.tsx';
 import { CheckCircle2, ChevronDown, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { useLanguage } from './i18n/LanguageContext.tsx';
 
 export default function App() {
+  const { t, language } = useLanguage();
   const [reports, setReports] = useState<PetReport[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [syncSource, setSyncSource] = useState<'cloud' | 'local'>('local');
@@ -68,7 +70,11 @@ export default function App() {
 
   const handleReportCreated = (newReport: PetReport) => {
     setReports((prev) => [newReport, ...prev.filter((r) => r.id !== newReport.id)]);
-    showToast(`Report for "${newReport.petName}" has been submitted and added to the feed!`);
+    const msg =
+      language === 'es'
+        ? `¡El reporte de "${newReport.petName}" ha sido enviado y publicado en el muro!`
+        : `Report for "${newReport.petName}" has been submitted and added to the feed!`;
+    showToast(msg);
     confetti({
       particleCount: 50,
       spread: 60,
@@ -89,7 +95,11 @@ export default function App() {
       if (detailReport && detailReport.id === report.id) {
         setDetailReport({ ...detailReport, status: 'reunited', resolved: true });
       }
-      showToast(`Celebration! "${report.petName}" has been marked as Reunited.`);
+      const msg =
+        language === 'es'
+          ? `¡Celebración! "${report.petName}" ha sido marcado como Reunido con su familia.`
+          : `Celebration! "${report.petName}" has been marked as Reunited.`;
+      showToast(msg);
       confetti({
         particleCount: 100,
         spread: 80,
@@ -183,13 +193,13 @@ export default function App() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
               <div>
                 <span className="text-xs uppercase tracking-widest font-bold text-[#806a5b] block mb-2">
-                  Active Community Feed
+                  {t.feedLabel}
                 </span>
                 <h2 className="font-editorial text-3xl sm:text-4xl font-bold text-[#4d3930]">
-                  Recent Pet Reports
+                  {t.feedTitle}
                 </h2>
                 <p className="text-sm text-[#614b3f] mt-1 max-w-xl">
-                  Browse missing, found, and reunited pets in Santa Cruz de la Sierra. Click any card to connect with the reporter or print a neighborhood poster.
+                  {t.feedSubtitle}
                 </p>
               </div>
 
@@ -198,8 +208,8 @@ export default function App() {
                 <span className="w-2 h-2 rounded-full bg-[#81947c]" />
                 <span>
                   {syncSource === 'cloud'
-                    ? 'Cloud Firestore Synced'
-                    : 'Local Browser Storage Active'}
+                    ? t.cloudSynced
+                    : t.localStorageActive}
                 </span>
               </div>
             </div>
@@ -215,7 +225,7 @@ export default function App() {
             {isLoading ? (
               <div className="py-20 text-center text-[#806a5b] bg-[#fffdf9] rounded-3xl border border-[#e7dbd0]">
                 <div className="w-8 h-8 border-3 border-[#b98f73] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                <p className="text-sm font-medium">Loading Santa Cruz pet reports...</p>
+                <p className="text-sm font-medium">{t.loadingReports}</p>
               </div>
             ) : visibleReports.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -233,10 +243,10 @@ export default function App() {
               <div className="py-16 text-center bg-[#fffdf9] rounded-3xl border border-[#e7dbd0] p-8">
                 <span className="text-3xl block mb-2">🐾</span>
                 <h3 className="font-editorial text-xl font-bold text-[#4d3930] mb-2">
-                  No matching reports found
+                  {t.noReportsTitle}
                 </h3>
                 <p className="text-xs sm:text-sm text-[#806a5b] max-w-md mx-auto mb-6">
-                  Try adjusting your search terms or neighborhood filters to see more lost and found pets in Santa Cruz.
+                  {t.noReportsSubtitle}
                 </p>
                 <button
                   onClick={() =>
@@ -244,7 +254,7 @@ export default function App() {
                   }
                   className="px-5 py-2.5 text-xs font-semibold text-[#4d3930] bg-[#f5eee6] hover:bg-[#ead8c8] rounded-xl border border-[#dac8ba] transition-colors"
                 >
-                  Clear all filters
+                  {t.clearFilters}
                 </button>
               </div>
             )}
@@ -256,7 +266,7 @@ export default function App() {
                   onClick={() => setVisibleCount((prev) => prev + 6)}
                   className="inline-flex items-center gap-2 px-6 py-3 text-xs sm:text-sm font-semibold text-[#4d3930] bg-[#fffdf9] hover:bg-[#f5eee6] border border-[#dac8ba] rounded-xl shadow-xs transition-colors"
                 >
-                  <span>Load More Pet Reports</span>
+                  <span>{t.loadMore}</span>
                   <ChevronDown className="w-4 h-4 text-[#806a5b]" />
                 </button>
               </div>

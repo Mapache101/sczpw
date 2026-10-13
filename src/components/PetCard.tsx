@@ -1,6 +1,7 @@
 import React from 'react';
 import { MapPin, Phone, MessageSquare, Printer, CheckCircle2 } from 'lucide-react';
 import { PetReport } from '../types.ts';
+import { useLanguage } from '../i18n/LanguageContext.tsx';
 
 interface PetCardProps {
   report: PetReport;
@@ -15,6 +16,7 @@ export const PetCard: React.FC<PetCardProps> = ({
   onPrintFlyer,
   onMarkReunited
 }) => {
+  const { language, t } = useLanguage();
   const isLost = report.status === 'lost';
   const isFound = report.status === 'found';
   const isReunited = report.status === 'reunited' || report.resolved;
@@ -22,17 +24,22 @@ export const PetCard: React.FC<PetCardProps> = ({
   const timeAgo = (timestamp: number, dateStr?: string) => {
     const diffMs = Date.now() - (timestamp || new Date(dateStr || '').getTime() || Date.now());
     const hours = Math.floor(diffMs / (1000 * 60 * 60));
-    if (hours < 1) return 'Just now';
-    if (hours === 1) return '1 hour ago';
-    if (hours < 24) return `${hours} hours ago`;
+    if (hours < 1) return t.timeJustNow;
+    if (hours === 1) return t.time1HourAgo;
+    if (hours < 24) return t.timeHoursAgo.replace('{n}', String(hours));
     const days = Math.floor(hours / 24);
-    if (days === 1) return '1 day ago';
-    if (days < 30) return `${days} days ago`;
-    return new Date(timestamp).toLocaleDateString('es-BO', { month: 'short', day: 'numeric' });
+    if (days === 1) return t.time1DayAgo;
+    if (days < 30) return t.timeDaysAgo.replace('{n}', String(days));
+    return new Date(timestamp).toLocaleDateString(language === 'es' ? 'es-BO' : 'en-US', {
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   const whatsappMessage = encodeURIComponent(
-    `Hola ${report.contactName}! Vi el reporte en Santa Cruz Pet Watch sobre ${report.petName} (${report.breed || report.type}) en ${report.area}. Quería contactarte sobre esto.`
+    language === 'es'
+      ? `¡Hola ${report.contactName}! Vi el reporte en Santa Cruz Pet Watch sobre ${report.petName} (${report.breed || report.type}) en ${report.area}. Quería contactarte sobre esto.`
+      : `Hello ${report.contactName}! I saw your report on Santa Cruz Pet Watch about ${report.petName} (${report.breed || report.type}) in ${report.area}. Reaching out to you about this.`
   );
 
   const cleanWhatsappNumber = report.contactWhatsapp
@@ -50,7 +57,6 @@ export const PetCard: React.FC<PetCardProps> = ({
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           onError={(e) => {
-            // Elegant styled SVG fallback if external link fails
             (e.target as HTMLImageElement).src =
               'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=80';
           }}
@@ -60,17 +66,17 @@ export const PetCard: React.FC<PetCardProps> = ({
         <div className="absolute top-3.5 left-3.5">
           {isLost && (
             <span className="px-3 py-1 text-xs font-bold tracking-wider uppercase bg-[#b98f73] text-[#fffdf9] rounded-lg shadow-sm">
-              Lost Pet
+              {t.badgeLost}
             </span>
           )}
           {isFound && (
             <span className="px-3 py-1 text-xs font-bold tracking-wider uppercase bg-[#81947c] text-[#fffdf9] rounded-lg shadow-sm">
-              Found Pet
+              {t.badgeFound}
             </span>
           )}
           {isReunited && (
             <span className="px-3 py-1 text-xs font-bold tracking-wider uppercase bg-[#39734a] text-[#fffdf9] rounded-lg shadow-sm">
-              Reunited
+              {t.badgeReunited}
             </span>
           )}
         </div>
@@ -137,7 +143,7 @@ export const PetCard: React.FC<PetCardProps> = ({
               className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-[#fffdf9] bg-[#25D366] hover:bg-[#20ba5a] rounded-xl shadow-xs transition-colors whitespace-nowrap"
             >
               <MessageSquare className="w-3.5 h-3.5" />
-              <span>WhatsApp</span>
+              <span>{t.whatsappButton}</span>
             </a>
           ) : (
             <a
@@ -145,7 +151,7 @@ export const PetCard: React.FC<PetCardProps> = ({
               className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-[#fffdf9] bg-[#4d3930] hover:bg-[#362720] rounded-xl transition-colors whitespace-nowrap"
             >
               <Phone className="w-3.5 h-3.5" />
-              <span>Llamar</span>
+              <span>{t.callButton}</span>
             </a>
           )}
 
@@ -153,7 +159,7 @@ export const PetCard: React.FC<PetCardProps> = ({
             {/* Print Flyer Button */}
             <button
               onClick={() => onPrintFlyer(report)}
-              title="Print Emergency Lost Pet Poster"
+              title={t.printPosterButton}
               className="p-2 text-[#614b3f] hover:text-[#4d3930] hover:bg-[#f5eee6] rounded-xl border border-[#dac8ba] transition-colors"
             >
               <Printer className="w-4 h-4" />
@@ -163,7 +169,7 @@ export const PetCard: React.FC<PetCardProps> = ({
             {!isReunited && (
               <button
                 onClick={() => onMarkReunited(report)}
-                title="Mark as Reunited / Safe"
+                title={t.markReunitedTooltip}
                 className="p-2 text-[#81947c] hover:text-[#39734a] hover:bg-[#e5ece2] rounded-xl border border-[#dac8ba] transition-colors"
               >
                 <CheckCircle2 className="w-4 h-4" />
@@ -175,7 +181,7 @@ export const PetCard: React.FC<PetCardProps> = ({
               onClick={() => onViewDetails(report)}
               className="px-3.5 py-2 text-xs font-semibold text-[#4d3930] bg-[#f5eee6] hover:bg-[#ead8c8] rounded-xl border border-[#dac8ba] transition-colors whitespace-nowrap"
             >
-              Details
+              {t.detailsButton}
             </button>
           </div>
         </div>

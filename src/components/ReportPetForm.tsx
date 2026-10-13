@@ -4,6 +4,7 @@ import { PetReport, PetStatus, PetSpecies } from '../types.ts';
 import { SANTA_CRUZ_AREAS } from '../data/seedData.ts';
 import { compressImage } from '../services/imageCompressor.ts';
 import { savePetReport } from '../services/firebase.ts';
+import { useLanguage } from '../i18n/LanguageContext.tsx';
 
 interface ReportPetFormProps {
   onSuccess: (newReport: PetReport) => void;
@@ -14,6 +15,7 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
   onSuccess,
   onCancel
 }) => {
+  const { t } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [status, setStatus] = useState<PetStatus>('lost');
@@ -72,12 +74,12 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!consent) {
-      setFeedback({ type: 'error', message: 'Please confirm the accuracy consent checkbox.' });
+      setFeedback({ type: 'error', message: t.formErrorConsent });
       return;
     }
 
     if (!photoPreview) {
-      setFeedback({ type: 'error', message: 'Please upload or choose a clear photo of the pet.' });
+      setFeedback({ type: 'error', message: t.formErrorPhoto });
       return;
     }
 
@@ -124,10 +126,7 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
 
       setFeedback({
         type: 'success',
-        message:
-          result.source === 'cloud'
-            ? 'Your pet report was published directly to Firebase Cloud! Thank you for helping the community.'
-            : 'Your pet report was saved safely in browser storage and is now visible in the report feed!'
+        message: result.source === 'cloud' ? t.formSuccessCloud : t.formSuccessLocal
       });
 
       // Notify parent
@@ -165,13 +164,13 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <span className="text-xs uppercase tracking-widest font-bold text-[#806a5b] block mb-2">
-            Submit a Community Report
+            {t.formLabel}
           </span>
           <h2 className="font-editorial text-3xl sm:text-4xl font-bold text-[#4d3930]">
-            Report a Lost or Found Pet
+            {t.formTitle}
           </h2>
           <p className="text-sm text-[#614b3f] mt-2">
-            Provide as many visual and neighborhood details as possible to help the community recognize and recover the animal quickly.
+            {t.formSubtitle}
           </p>
         </div>
 
@@ -182,7 +181,7 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
           {/* Status Choice */}
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-[#806a5b] block mb-2.5">
-              1. Report Type *
+              {t.formStep1}
             </label>
             <div className="grid grid-cols-2 gap-4">
               <button
@@ -194,7 +193,7 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
                     : 'bg-[#faf6f0] text-[#614b3f] border-[#dac8ba] hover:bg-[#f2e5da]'
                 }`}
               >
-                🚨 Lost Pet (Perdido)
+                {t.formLostPet}
               </button>
               <button
                 type="button"
@@ -205,7 +204,7 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
                     : 'bg-[#faf6f0] text-[#614b3f] border-[#dac8ba] hover:bg-[#f2e5da]'
                 }`}
               >
-                🐾 Found Pet (Encontrado)
+                {t.formFoundPet}
               </button>
             </div>
           </div>
@@ -213,63 +212,63 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
           {/* Pet Basic Information */}
           <div className="space-y-4 pt-4 border-t border-[#f2e5da]">
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#806a5b]">
-              2. Pet Description
+              {t.formStep2}
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-[#4d3930] mb-1">
-                  Pet's Name {status === 'found' ? '(or "Sin Nombre")' : '*'}
+                  {t.formPetName} {status === 'found' ? '(opcional)' : '*'}
                 </label>
                 <input
                   type="text"
                   required={status === 'lost'}
                   value={petName}
                   onChange={(e) => setPetName(e.target.value)}
-                  placeholder={status === 'lost' ? 'e.g. Toby, Mía' : 'Sin Nombre / Desconocido'}
+                  placeholder={status === 'lost' ? t.formPetNamePlaceholderLost : t.formPetNamePlaceholderFound}
                   className="w-full px-3.5 py-2.5 text-sm bg-[#faf6f0] border border-[#dac8ba] rounded-xl text-[#4d3930] focus:ring-2 focus:ring-[#b98f73]/50 focus:outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-[#4d3930] mb-1">
-                  Species / Animal *
+                  {t.formSpecies}
                 </label>
                 <select
                   value={type}
                   onChange={(e) => setType(e.target.value as PetSpecies)}
                   className="w-full px-3.5 py-2.5 text-sm bg-[#faf6f0] border border-[#dac8ba] rounded-xl text-[#4d3930] focus:ring-2 focus:ring-[#b98f73]/50 focus:outline-none"
                 >
-                  <option value="dog">Perro (Dog)</option>
-                  <option value="cat">Gato (Cat)</option>
-                  <option value="bird">Ave / Loro (Bird)</option>
-                  <option value="other">Otro animal (Other)</option>
+                  <option value="dog">{t.dogs}</option>
+                  <option value="cat">{t.cats}</option>
+                  <option value="bird">Ave / Bird</option>
+                  <option value="other">{t.other}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-[#4d3930] mb-1">
-                  Breed or Mixed Type
+                  {t.formBreed}
                 </label>
                 <input
                   type="text"
                   value={breed}
                   onChange={(e) => setBreed(e.target.value)}
-                  placeholder="e.g. Golden Retriever, Mestizo, Siamés"
+                  placeholder={t.formBreedPlaceholder}
                   className="w-full px-3.5 py-2.5 text-sm bg-[#faf6f0] border border-[#dac8ba] rounded-xl text-[#4d3930] focus:ring-2 focus:ring-[#b98f73]/50 focus:outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-[#4d3930] mb-1">
-                  Color &amp; Coat Pattern *
+                  {t.formColor}
                 </label>
                 <input
                   type="text"
                   required
                   value={color}
                   onChange={(e) => setColor(e.target.value)}
-                  placeholder="e.g. Blanco con manchas negras, Dorado, Atigrado"
+                  placeholder={t.formColorPlaceholder}
                   className="w-full px-3.5 py-2.5 text-sm bg-[#faf6f0] border border-[#dac8ba] rounded-xl text-[#4d3930] focus:ring-2 focus:ring-[#b98f73]/50 focus:outline-none"
                 />
               </div>
@@ -277,14 +276,14 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
 
             <div>
               <label className="block text-xs font-semibold text-[#4d3930] mb-1">
-                Distinctive Markings &amp; Identifying Details *
+                {t.formDistinctiveFeatures}
               </label>
               <textarea
                 required
                 rows={3}
                 value={distinctiveFeatures}
                 onChange={(e) => setDistinctiveFeatures(e.target.value)}
-                placeholder="Mention collars, tags, scars, clipped ears, behavior (shy, friendly), microchip, or recent haircut..."
+                placeholder={t.formDistinctivePlaceholder}
                 className="w-full px-3.5 py-2.5 text-sm bg-[#faf6f0] border border-[#dac8ba] rounded-xl text-[#4d3930] focus:ring-2 focus:ring-[#b98f73]/50 focus:outline-none"
               />
             </div>
@@ -292,13 +291,13 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
             {status === 'lost' && (
               <div>
                 <label className="block text-xs font-semibold text-[#4d3930] mb-1">
-                  Reward (Optional)
+                  {t.formReward}
                 </label>
                 <input
                   type="text"
                   value={reward}
                   onChange={(e) => setReward(e.target.value)}
-                  placeholder="e.g. Recompensa 500 Bs / Gratificación"
+                  placeholder={t.formRewardPlaceholder}
                   className="w-full px-3.5 py-2.5 text-sm bg-[#faf6f0] border border-[#dac8ba] rounded-xl text-[#4d3930] focus:ring-2 focus:ring-[#b98f73]/50 focus:outline-none"
                 />
               </div>
@@ -308,13 +307,13 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
           {/* Location & Neighborhood in Santa Cruz */}
           <div className="space-y-4 pt-4 border-t border-[#f2e5da]">
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#806a5b]">
-              3. Santa Cruz Location &amp; Date
+              {t.formStep3}
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-[#4d3930] mb-1">
-                  Neighborhood / Zone *
+                  {t.formNeighborhood}
                 </label>
                 <select
                   value={area}
@@ -331,7 +330,7 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
 
               <div>
                 <label className="block text-xs font-semibold text-[#4d3930] mb-1">
-                  Date Last Seen / Found *
+                  {t.formDate}
                 </label>
                 <input
                   type="date"
@@ -345,18 +344,18 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
 
             <div>
               <label className="block text-xs font-semibold text-[#4d3930] mb-1">
-                Specific Landmark / Cross Streets *
+                {t.formLocation}
               </label>
               <input
                 type="text"
                 required
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                placeholder="e.g. Calle 8 y Av. San Martín, frente a la farmacia (no publicar número exacto de casa)"
+                placeholder={t.formLocationPlaceholder}
                 className="w-full px-3.5 py-2.5 text-sm bg-[#faf6f0] border border-[#dac8ba] rounded-xl text-[#4d3930] focus:ring-2 focus:ring-[#b98f73]/50 focus:outline-none"
               />
               <span className="text-[11px] text-[#806a5b] block mt-1">
-                Tip: Avoid publishing your private home address number; neighborhood or intersection is recommended.
+                {t.formLocationTip}
               </span>
             </div>
           </div>
@@ -364,7 +363,7 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
           {/* Photo Upload Pipeline */}
           <div className="space-y-4 pt-4 border-t border-[#f2e5da]">
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#806a5b]">
-              4. Pet Photograph *
+              {t.formStep4}
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
@@ -386,14 +385,14 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
                     <Camera className="w-6 h-6 text-[#b98f73]" />
                   </div>
                   <span className="text-xs font-bold text-[#4d3930] block">
-                    Upload from Device or Camera
+                    {t.formUploadFromDevice}
                   </span>
                   <span className="text-[11px] text-[#806a5b] block mt-1">
-                    Auto-compressed for fast loading
+                    {t.formAutoCompressed}
                   </span>
                   {isCompressing && (
                     <span className="text-xs text-[#b98f73] font-semibold block mt-2">
-                      Optimizing photo...
+                      {t.formOptimizingPhoto}
                     </span>
                   )}
                 </div>
@@ -401,7 +400,7 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
                 {/* Quick sample photo selector for testing */}
                 <div className="mt-3">
                   <span className="text-[11px] text-[#806a5b] block mb-1.5">
-                    Or select sample test photo:
+                    {t.formSampleTestPhoto}
                   </span>
                   <div className="flex gap-2">
                     <button
@@ -413,7 +412,7 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
                       }
                       className="text-[10px] px-2 py-1 bg-[#f5eee6] hover:bg-[#ead8c8] border border-[#dac8ba] rounded-md font-medium text-[#614b3f]"
                     >
-                      Dog Sample
+                      {t.formDogSample}
                     </button>
                     <button
                       type="button"
@@ -424,7 +423,7 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
                       }
                       className="text-[10px] px-2 py-1 bg-[#f5eee6] hover:bg-[#ead8c8] border border-[#dac8ba] rounded-md font-medium text-[#614b3f]"
                     >
-                      Cat Sample
+                      {t.formCatSample}
                     </button>
                   </div>
                 </div>
@@ -442,7 +441,7 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
                   ) : (
                     <div className="text-center p-4 text-[#9b8778]">
                       <ImageIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                      <span className="text-xs">No photo selected yet</span>
+                      <span className="text-xs">{t.formNoPhotoSelected}</span>
                     </div>
                   )}
                 </div>
@@ -453,60 +452,60 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
           {/* Contact Information */}
           <div className="space-y-4 pt-4 border-t border-[#f2e5da]">
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#806a5b]">
-              5. Contact Information
+              {t.formStep5}
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-[#4d3930] mb-1">
-                  Your Full Name *
+                  {t.formYourName}
                 </label>
                 <input
                   type="text"
                   required
                   value={contactName}
                   onChange={(e) => setContactName(e.target.value)}
-                  placeholder="e.g. Mariana Suarez"
+                  placeholder="ej. Mariana Suarez"
                   className="w-full px-3.5 py-2.5 text-sm bg-[#faf6f0] border border-[#dac8ba] rounded-xl text-[#4d3930] focus:ring-2 focus:ring-[#b98f73]/50 focus:outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-[#4d3930] mb-1">
-                  Phone Number *
+                  {t.formPhone}
                 </label>
                 <input
                   type="tel"
                   required
                   value={contactPhone}
                   onChange={(e) => setContactPhone(e.target.value)}
-                  placeholder="e.g. +591 76012345"
+                  placeholder="ej. +591 76012345"
                   className="w-full px-3.5 py-2.5 text-sm bg-[#faf6f0] border border-[#dac8ba] rounded-xl text-[#4d3930] focus:ring-2 focus:ring-[#b98f73]/50 focus:outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-[#4d3930] mb-1">
-                  WhatsApp Number (for direct chat button)
+                  {t.formWhatsapp}
                 </label>
                 <input
                   type="tel"
                   value={contactWhatsapp}
                   onChange={(e) => setContactWhatsapp(e.target.value)}
-                  placeholder="e.g. 59176012345 (con código de país)"
+                  placeholder={t.formWhatsappPlaceholder}
                   className="w-full px-3.5 py-2.5 text-sm bg-[#faf6f0] border border-[#dac8ba] rounded-xl text-[#4d3930] focus:ring-2 focus:ring-[#b98f73]/50 focus:outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-[#4d3930] mb-1">
-                  Meeting / Safety Instructions
+                  {t.formMeetingNotes}
                 </label>
                 <input
                   type="text"
                   value={contactNotes}
                   onChange={(e) => setContactNotes(e.target.value)}
-                  placeholder="e.g. Contactar por WhatsApp a cualquier hora"
+                  placeholder={t.formMeetingNotesPlaceholder}
                   className="w-full px-3.5 py-2.5 text-sm bg-[#faf6f0] border border-[#dac8ba] rounded-xl text-[#4d3930] focus:ring-2 focus:ring-[#b98f73]/50 focus:outline-none"
                 />
               </div>
@@ -523,7 +522,7 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
                   className="mt-1 w-4 h-4 rounded border-[#dac8ba] text-[#4d3930] focus:ring-[#b98f73]"
                 />
                 <span className="text-xs text-[#614b3f] leading-relaxed">
-                  I confirm that the information provided is accurate and I agree to be contacted by community members regarding this pet report.
+                  {t.formConsent}
                 </span>
               </label>
             </div>
@@ -557,7 +556,7 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
                 onClick={onCancel}
                 className="w-full sm:w-auto px-5 py-3 text-xs font-semibold text-[#614b3f] hover:text-[#4d3930] rounded-xl transition-colors"
               >
-                Cancel
+                {t.formCancel}
               </button>
             )}
             <button
@@ -568,10 +567,10 @@ export const ReportPetForm: React.FC<ReportPetFormProps> = ({
               {isSubmitting ? (
                 <>
                   <Upload className="w-4 h-4 animate-bounce" />
-                  <span>Submitting Report...</span>
+                  <span>{t.formSubmitting}</span>
                 </>
               ) : (
-                <span>Submit Pet Report</span>
+                <span>{t.formSubmitButton}</span>
               )}
             </button>
           </div>

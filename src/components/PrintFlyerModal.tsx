@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Printer, Phone } from 'lucide-react';
 import { PetReport } from '../types.ts';
+import { useLanguage } from '../i18n/LanguageContext.tsx';
 
 interface PrintFlyerModalProps {
   report: PetReport | null;
@@ -11,11 +12,12 @@ export const PrintFlyerModal: React.FC<PrintFlyerModalProps> = ({
   report,
   onClose
 }) => {
+  const { t } = useLanguage();
   if (!report) return null;
 
   const isLost = report.status === 'lost';
-  const headline = isLost ? '¡SE BUSCA MASCOTA!' : '¡MASCOTA ENCONTRADA!';
-  const subtitle = isLost ? 'PLEASE HELP US FIND OUR PET' : 'LOOKING FOR OWNER';
+  const headline = isLost ? t.flyerLostHeader : t.flyerFoundHeader;
+  const subtitle = isLost ? t.flyerLostSubtitle : t.flyerFoundSubtitle;
 
   const handlePrint = () => {
     window.print();
@@ -36,8 +38,9 @@ export const PrintFlyerModal: React.FC<PrintFlyerModalProps> = ({
         {/* Modal Controls (Not printed) */}
         <div className="no-print flex items-center justify-between pb-4 mb-4 border-b border-neutral-200">
           <div className="flex items-center gap-2">
-            <span id="print-flyer-title" className="text-sm font-bold text-neutral-800">Printable Emergency Flyer</span>
-            <span className="text-xs text-neutral-500">(Optimized for standard letter paper)</span>
+            <span id="print-flyer-title" className="text-sm font-bold text-neutral-800">
+              {t.printTitle}
+            </span>
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -45,11 +48,11 @@ export const PrintFlyerModal: React.FC<PrintFlyerModalProps> = ({
               className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-black hover:bg-neutral-800 rounded-lg shadow-sm transition-colors cursor-pointer"
             >
               <Printer className="w-4 h-4" />
-              <span>Print Flyer</span>
+              <span>{t.printButton}</span>
             </button>
             <button
               onClick={onClose}
-              aria-label="Cerrar folleto"
+              aria-label={t.closeModal}
               className="p-2 text-neutral-500 hover:text-black rounded-lg hover:bg-neutral-100 transition-colors"
             >
               <X className="w-5 h-5" />
@@ -101,12 +104,12 @@ export const PrintFlyerModal: React.FC<PrintFlyerModalProps> = ({
           {/* Key Details Grid */}
           <div className="grid grid-cols-2 gap-3 text-left border-2 border-black p-3 mb-4 bg-neutral-50 text-xs sm:text-sm">
             <div>
-              <strong>Lugar / Zona:</strong>
+              <strong>{t.flyerZone}</strong>
               <p className="font-semibold text-neutral-800">{report.area}</p>
               <p className="text-neutral-600 text-[11px]">{report.location}</p>
             </div>
             <div>
-              <strong>Fecha:</strong>
+              <strong>{t.flyerDate}</strong>
               <p className="font-semibold text-neutral-800">{report.lastSeenDate}</p>
               <p className="text-neutral-600 text-[11px]">Santa Cruz de la Sierra</p>
             </div>
@@ -116,7 +119,7 @@ export const PrintFlyerModal: React.FC<PrintFlyerModalProps> = ({
           {report.distinctiveFeatures && (
             <div className="text-left mb-4 p-3 border border-neutral-300 rounded bg-white">
               <strong className="text-xs uppercase text-neutral-600 block mb-1">
-                Rasgos y señas particulares:
+                {t.flyerMarkings}
               </strong>
               <p className="text-xs sm:text-sm leading-relaxed text-neutral-900 font-medium">
                 {report.distinctiveFeatures}
@@ -127,7 +130,7 @@ export const PrintFlyerModal: React.FC<PrintFlyerModalProps> = ({
           {/* Emergency Contact */}
           <div className="bg-black text-white p-4 mb-6">
             <span className="text-xs uppercase tracking-wider block font-bold">
-              Si lo has visto o tienes alguna información, comunícate de inmediato con:
+              {t.flyerContactBox}
             </span>
             <div className="text-xl sm:text-2xl font-black mt-1 flex items-center justify-center gap-2">
               <Phone className="w-5 h-5" />
@@ -138,7 +141,7 @@ export const PrintFlyerModal: React.FC<PrintFlyerModalProps> = ({
           {/* 8 Tear-Off Contact Slips */}
           <div className="border-t-2 border-dashed border-black pt-3">
             <span className="text-[10px] text-neutral-500 uppercase tracking-wider block mb-2">
-              ✂ Tiras recortables para postes y vitrinas comunitarias ✂
+              {t.flyerTearOffInstruction}
             </span>
             <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 text-center">
               {[...Array(8)].map((_, idx) => (
@@ -157,7 +160,7 @@ export const PrintFlyerModal: React.FC<PrintFlyerModalProps> = ({
           </div>
 
           <div className="mt-4 text-[10px] text-neutral-400">
-            Publicado en Santa Cruz Pet Watch · Comunidad de recuperación de mascotas
+            {t.flyerFooter}
           </div>
         </div>
       </div>

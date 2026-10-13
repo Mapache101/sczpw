@@ -1,5 +1,6 @@
 import React from 'react';
 import { PetReport } from '../types.ts';
+import { useLanguage } from '../i18n/LanguageContext.tsx';
 
 interface HeroProps {
   reports: PetReport[];
@@ -7,6 +8,7 @@ interface HeroProps {
 }
 
 export const Hero: React.FC<HeroProps> = ({ reports, onReportClick }) => {
+  const { t } = useLanguage();
   const lostCount = reports.filter(r => r.status === 'lost').length;
   const foundCount = reports.filter(r => r.status === 'found').length;
   const reunitedCount = reports.filter(r => r.status === 'reunited' || r.resolved).length;
@@ -21,13 +23,13 @@ export const Hero: React.FC<HeroProps> = ({ reports, onReportClick }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-3xl">
           <span className="inline-block text-xs uppercase tracking-widest font-semibold text-[#806a5b] mb-4">
-            Community Pet Recovery · Santa Cruz de la Sierra
+            {t.heroLabel}
           </span>
           <h1 className="font-editorial text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#4d3930] leading-[1.15] mb-6 text-balance">
-            Help bring lost pets home in Santa Cruz.
+            {t.heroTitle}
           </h1>
           <p className="text-base sm:text-lg text-[#614b3f] leading-relaxed mb-8 max-w-2xl">
-            Every minute matters when a pet goes missing. Browse real-time lost and found reports, share sightings with your neighborhood rings, generate emergency posters, or report a pet right now.
+            {t.heroSubtitle}
           </p>
 
           <div className="flex flex-wrap items-center gap-4">
@@ -35,13 +37,13 @@ export const Hero: React.FC<HeroProps> = ({ reports, onReportClick }) => {
               onClick={onReportClick}
               className="px-6 py-3.5 text-sm sm:text-base font-semibold text-[#fffdf9] bg-[#4d3930] hover:bg-[#362720] rounded-xl shadow-md transition-all active:scale-95 whitespace-nowrap"
             >
-              Report a Pet Now
+              {t.heroReportCta}
             </button>
             <a
               href="#reports"
               className="px-6 py-3.5 text-sm sm:text-base font-semibold text-[#4d3930] bg-[#fffdf9] hover:bg-[#f7ecdf] border border-[#dac8ba] rounded-xl shadow-sm transition-all whitespace-nowrap"
             >
-              Explore Active Reports
+              {t.heroExploreCta}
             </a>
           </div>
         </div>
@@ -53,7 +55,7 @@ export const Hero: React.FC<HeroProps> = ({ reports, onReportClick }) => {
               {lostCount}
             </div>
             <div className="text-xs uppercase tracking-wider font-semibold text-[#806a5b] mt-1">
-              Currently Missing
+              {t.kpiMissing}
             </div>
           </div>
 
@@ -62,7 +64,7 @@ export const Hero: React.FC<HeroProps> = ({ reports, onReportClick }) => {
               {foundCount}
             </div>
             <div className="text-xs uppercase tracking-wider font-semibold text-[#806a5b] mt-1">
-              Found &amp; In Care
+              {t.kpiFound}
             </div>
           </div>
 
@@ -71,7 +73,7 @@ export const Hero: React.FC<HeroProps> = ({ reports, onReportClick }) => {
               {reunitedCount}
             </div>
             <div className="text-xs uppercase tracking-wider font-semibold text-[#806a5b] mt-1">
-              Pets Reunited
+              {t.kpiReunited}
             </div>
           </div>
 
@@ -80,7 +82,7 @@ export const Hero: React.FC<HeroProps> = ({ reports, onReportClick }) => {
               {areasCount}
             </div>
             <div className="text-xs uppercase tracking-wider font-semibold text-[#806a5b] mt-1">
-              Santa Cruz Neighborhoods
+              {t.kpiAreas}
             </div>
           </div>
         </div>
